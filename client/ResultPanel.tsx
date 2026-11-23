@@ -1,3 +1,5 @@
+import { useEffect, useRef } from 'react'
+import { Paper } from '@mui/material'
 import type { Result } from '../shared/contract'
 const groups = new Intl.NumberFormat('ru-RU')
 export function digits(raw: string | number) {
@@ -20,8 +22,17 @@ export default function ResultPanel({
   stale: boolean
 }) {
   const t = result?.totals
+  const productHeading = useRef<HTMLHeadingElement>(null)
+  useEffect(() => {
+    if (result) productHeading.current?.focus()
+  }, [result])
   return (
-    <aside className="report" aria-label="Результат расчёта" aria-live="polite">
+    <Paper
+      component="aside"
+      variant="outlined"
+      className="report"
+      aria-label="Результат расчёта"
+    >
       <header>
         <span className="kicker">РАСЧЁТ ПАРТИИ</span>
         <h2>Сводка заказа</h2>
@@ -41,7 +52,7 @@ export default function ResultPanel({
               Результат устарел · пересчитайте заказ
             </strong>
           )}
-          <h3>{result.productName}</h3>
+          <h3 ref={productHeading} tabIndex={-1}>{result.productName}</h3>
           <p>
             {digits(result.productQuantity)} шт. · Запусков:{' '}
             {digits(result.runs)}
@@ -79,6 +90,6 @@ export default function ResultPanel({
           </dl>
         </div>
       )}
-    </aside>
+    </Paper>
   )
 }

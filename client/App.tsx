@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { Alert, Button, CircularProgress, TextField } from '@mui/material'
+import { Alert, Button, CircularProgress, Paper, TextField } from '@mui/material'
 import type { Blueprint, Result } from '../shared/contract'
 import { validate } from '../shared/validate'
 import ResultPanel, { digits } from './ResultPanel'
@@ -18,8 +18,10 @@ export default function App() {
   const [message, setMessage] = useState('')
   const [busy, setBusy] = useState(false)
   const lock = useRef(false)
+  const focusOnError = useRef<string | undefined>(undefined)
   const [result, setResult] = useState<Result | null>(null)
   const [stale, setStale] = useState(false)
+  const formDisabled = busy || phase !== 'ready' || !catalog.length
   const blueprint = catalog.find((b) => b.id === id)
   const count =
     /^[0-9]+$/.test(runs.trim()) && +runs >= 1 && +runs <= 10000 ? +runs : 0
@@ -42,6 +44,22 @@ export default function App() {
     void fetchCatalog()
     return () => abort.abort()
   }, [attempt])
+  useEffect(() => {
+    if (busy || !focusOnError.current) return
+    document.getElementById(focusOnError.current)?.focus()
+    focusOnError.current = undefined
+  }, [busy, errors, message])
+
+  function showFieldErrors(fields: Record<string, string>) {
+    focusOnError.current = Object.keys(fields)[0]
+    setErrors(fields)
+  }
+
+  function retryCatalog() {
+    setPhase('loading')
+    reload((n) => n + 1)
+  }
+
   function edit(key: string) {
     setStale(true)
     setMessage('')
@@ -80,8 +98,7 @@ export default function App() {
     }
     const check = validate(body, catalog)
     if (!check.ok) {
-      setErrors(check.fields)
-      document.getElementById(Object.keys(check.fields)[0])?.focus()
+      showFieldErrors(check.fields)
       return
     }
     lock.current = true
@@ -95,13 +112,15 @@ export default function App() {
         body: JSON.stringify(body),
       })
       if (!res.ok) {
-        if (res.status === 422)
-          setErrors((await res.json()).error?.fields ?? {})
+        if (res.status === 422) {
+          showFieldErrors((await res.json()).error?.fields ?? {})
+        }
         throw new Error()
       }
       setResult(await res.json())
       setStale(false)
     } catch {
+      focusOnError.current ??= 'calculate'
       setMessage(
         'Не удалось рассчитать заказ. Проверьте данные и повторите расчёт.',
       )
@@ -116,6 +135,7 @@ export default function App() {
     value: string,
     update: (v: string) => void,
     money = true,
+    materialLabelId?: string,
   ) {
     return (
       <TextField
@@ -123,6 +143,7 @@ export default function App() {
         label={label}
         size="small"
         fullWidth
+        disabled={formDisabled}
         value={value}
         error={!!errors[key]}
         helperText={errors[key]}
@@ -132,7 +153,13 @@ export default function App() {
         }}
         onBlur={(e) => update(e.target.value.trim())}
         slotProps={{
-          htmlInput: { inputMode: 'numeric' },
+          htmlInput: {
+            inputMode: 'numeric',
+            'aria-required': true,
+            'aria-labelledby': materialLabelId
+              ? `${key}-label ${materialLabelId}`
+              : undefined,
+          },
           input: money ? { endAdornment: <small>ISK</small> } : {},
         }}
       />
@@ -159,18 +186,39 @@ export default function App() {
           </p>
         </div>
         <div className="workspace">
-          <form noValidate onSubmit={submit}>
-            <fieldset disabled={busy || phase !== 'ready' || !catalog.length}>
+          <Paper
+            component="form"
+            variant="outlined"
+            className="order"
+            noValidate
+            onSubmit={submit}
+          >
+            <h2 className="order-title">Параметры партии</h2>
+            {phase === 'loading' && (
+              <p className="catalog-status" role="status">Загрузка каталога…</p>
+            )}
+            {phase === 'ready' && !catalog.length && (
+              <div className="catalog-status">
+                <p role="status">Нет доступных чертежей</p>
+                <Button type="button" onClick={retryCatalog}>Обновить каталог</Button>
+              </div>
+            )}
+            {phase === 'error' && (
+              <Alert
+                className="catalog-status"
+                severity="error"
+                action={<Button type="button" onClick={retryCatalog}>Повторить</Button>}
+              >
+                Не удалось загрузить каталог
+              </Alert>
+            )}
+            <fieldset disabled={formDisabled}>
               <section>
-                <h2>Параметры партии</h2>
-                {phase === 'loading' && <p role="status">Загрузка каталога…</p>}
-                {phase === 'ready' && !catalog.length && (
-                  <p role="status">Нет доступных чертежей</p>
-                )}
                 <div className="pair">
                   <TextField
                     select
                     fullWidth
+                    disabled={formDisabled}
                     size="small"
                     id="blueprintId"
                     label="Чертёж"
@@ -180,6 +228,7 @@ export default function App() {
                     helperText={errors.blueprintId}
                     slotProps={{
                       select: { native: true },
+                      htmlInput: { 'aria-required': true },
                       inputLabel: { shrink: true },
                     }}
                   >
@@ -208,7 +257,7 @@ export default function App() {
                   blueprint.materials.map((m) => (
                     <div className="material" key={m.id}>
                       <div>
-                        <strong>{m.name}</strong>
+                        <strong id={'name-' + m.id}>{m.name}</strong>
                         <p>
                           {m.quantityPerRun} за запуск ·{' '}
                           {count ? digits(count * m.quantityPerRun) : '—'} на
@@ -220,6 +269,8 @@ export default function App() {
                         'Цена за единицу',
                         prices[m.id] ?? '',
                         (v) => setPrices((prev) => ({ ...prev, [m.id]: v })),
+                        true,
+                        'name-' + m.id,
                       )}
                     </div>
                   ))
@@ -247,35 +298,25 @@ export default function App() {
                   )}
                 </div>
               </section>
+
+              {message && (
+                <Alert className="calculation-error" severity="error">{message}</Alert>
+              )}
+              {busy && (
+                <p className="calculation-status" role="status">Выполняется расчёт партии…</p>
+              )}
               <Button
+                id="calculate"
                 fullWidth
                 type="submit"
                 variant="contained"
-                disabled={busy || phase !== 'ready' || !catalog.length}
-                startIcon={busy ? <CircularProgress size={16} /> : undefined}
+                disabled={formDisabled}
+                startIcon={busy ? <CircularProgress size={16} aria-hidden="true" /> : undefined}
               >
                 {busy ? 'Расчёт…' : 'Рассчитать'}
               </Button>
             </fieldset>
-            {phase === 'error' && (
-              <Alert
-                severity="error"
-                action={
-                  <Button
-                    onClick={() => {
-                      setPhase('loading')
-                      reload((n) => n + 1)
-                    }}
-                  >
-                    Повторить
-                  </Button>
-                }
-              >
-                Не удалось загрузить каталог
-              </Alert>
-            )}
-            {message && <Alert severity="error">{message}</Alert>}
-          </form>
+          </Paper>
           <ResultPanel result={result} stale={stale} />
         </div>
       </main>

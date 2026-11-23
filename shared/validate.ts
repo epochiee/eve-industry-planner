@@ -17,6 +17,10 @@ export function validate(value: unknown, catalog: Blueprint[]) {
     fields.runs = 'Укажите целое число от 1 до 10 000'
 
   function money(key: string, price: unknown) {
+    if (price === '') {
+      fields[key] = 'Введите сумму в ISK'
+      return
+    }
     if (
       typeof price !== 'string' ||
       price.length > 13 ||
