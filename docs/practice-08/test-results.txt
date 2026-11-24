@@ -1,4 +1,4 @@
-Практика 8. Фактический прогон 23 ноября 2026 года.
+Практика 8. Фактический прогон в исходном репозитории 24 ноября 2026 года.
 Windows, Node.js v25.2.0, npm 11.6.2, Microsoft Edge 158.0.4370.33
 
 $ make verify client
@@ -8,13 +8,13 @@ npm test
 > vitest run
 
 
- RUN  v4.1.12 C:/Users/Stepan/Documents/ITMO/eve-industry-planner
+ RUN  v4.1.12 .
 
 
  Test Files  3 passed (3)
       Tests  37 passed (37)
-   Start at  03:36:25
-   Duration  11.88s (transform 306ms, setup 0ms, import 3.49s, tests 7.46s, environment 1.29s)
+   Start at  18:35:42
+   Duration  63.14s (transform 722ms, setup 0ms, import 39.08s, tests 7.38s, environment 22.58s)
 
 npm run build
 
@@ -31,7 +31,7 @@ computing gzip size...
 dist/index.html                   0.50 kB │ gzip:   0.35 kB
 dist/assets/index-Bb3YCxVq.css    3.99 kB │ gzip:   1.42 kB
 dist/assets/index-vSE8GRby.js   431.76 kB │ gzip: 134.89 kB
-✓ built in 584ms
+✓ built in 2.59s
 npm run test:integration
 
 > verf-industry-planner@1.0.0 test:integration
@@ -40,39 +40,39 @@ npm run test:integration
 
 Running 4 tests using 3 workers
 
-(node:21920) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:24184) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:31340) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:9972) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-(node:31548) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
+(node:26748) Warning: The 'NO_COLOR' env is ignored due to the 'FORCE_COLOR' env being set.
 (Use `node --trace-warnings ...` to show where the warning was created)
-  ok 2 integration\prototype.spec.ts:5:1 › HTML-прототип открывается локально и показывает состояния сценария (4.1s)
-  ok 3 integration\states.spec.ts:4:1 › браузер показывает загрузку, пустой каталог и повтор загрузки (4.3s)
-  ok 4 integration\states.spec.ts:33:1 › браузер блокирует двойной клик и Enter, показывает ошибку и выполняет повтор (1.9s)
-  ok 1 integration\order.spec.ts:4:1 › проходит контрольный заказ с клавиатуры через настоящий Express API (6.4s)
+  ok 2 integration\prototype.spec.ts:5:1 › HTML-прототип открывается локально и показывает состояния сценария (3.4s)
+  ok 3 integration\states.spec.ts:4:1 › браузер показывает загрузку, пустой каталог и повтор загрузки (3.7s)
+  ok 1 integration\order.spec.ts:4:1 › проходит контрольный заказ с клавиатуры через настоящий Express API (3.6s)
+  ok 4 integration\states.spec.ts:33:1 › браузер блокирует двойной клик и Enter, показывает ошибку и выполняет повтор (1.8s)
 
-  4 passed (11.3s)
+  4 passed (12.0s)
 npm run test:client -- --reporter=verbose
 
 > verf-industry-planner@1.0.0 test:client
 > vitest run tests/form.test.tsx --reporter=verbose
 
 
- RUN  v4.1.12 C:/Users/Stepan/Documents/ITMO/eve-industry-planner
+ RUN  v4.1.12 .
 
- ✓ tests/form.test.tsx > показывает загрузку каталога, сбой, пустой ответ и восстановление по кнопке 790ms
- ✓ tests/form.test.tsx > показывает состав партии и сохраняет общие поля при смене чертежа 1050ms
- ✓ tests/form.test.tsx > объясняет пропуск обязательных полей, переводит фокус и не отправляет POST 381ms
- ✓ tests/form.test.tsx > объясняет ошибку диапазона и формата, снимает сообщения после правки 1141ms
- ✓ tests/form.test.tsx > показывает ответ 422 у нужного поля и сохраняет заказ для исправления 983ms
- ✓ tests/form.test.tsx > показывает ошибку 500 и позволяет повторить расчёт с теми же данными 1059ms
- ✓ tests/form.test.tsx > на задержанном ответе блокирует повторный клик и повторную отправку формы 859ms
- ✓ tests/form.test.tsx > проводит заказ от выбора чертежа до прибыли и помечает сводку после правки 892ms
+ ✓ tests/form.test.tsx > показывает загрузку каталога, сбой, пустой ответ и восстановление по кнопке 706ms
+ ✓ tests/form.test.tsx > показывает состав партии и сохраняет общие поля при смене чертежа 904ms
+ ✓ tests/form.test.tsx > объясняет пропуск обязательных полей, переводит фокус и не отправляет POST 353ms
+ ✓ tests/form.test.tsx > объясняет ошибку диапазона и формата, снимает сообщения после правки 1051ms
+ ✓ tests/form.test.tsx > показывает ответ 422 у нужного поля и сохраняет заказ для исправления 787ms
+ ✓ tests/form.test.tsx > показывает ошибку 500 и позволяет повторить расчёт с теми же данными 914ms
+ ✓ tests/form.test.tsx > на задержанном ответе блокирует повторный клик и повторную отправку формы 739ms
+ ✓ tests/form.test.tsx > проводит заказ от выбора чертежа до прибыли и помечает сводку после правки 787ms
 
  Test Files  1 passed (1)
       Tests  8 passed (8)
-   Start at  03:36:59
-   Duration  11.71s (transform 179ms, setup 0ms, import 2.90s, tests 7.16s, environment 1.24s)
+   Start at  18:37:33
+   Duration  10.90s (transform 173ms, setup 0ms, import 3.04s, tests 6.24s, environment 1.19s)
 
 
 Проверка чувствительности теста к повторной отправке
