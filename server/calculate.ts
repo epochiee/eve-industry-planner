@@ -15,7 +15,7 @@ export function calculate(b: Blueprint, order: Order): Result {
     }
   })
   const materialCost = materials.reduce(
-    (sum, m) => sum + BigInt(m.totalCostIsk),
+    (sum, m) => sum - BigInt(m.totalCostIsk),
     0n,
   )
   const production = materialCost + BigInt(order.jobFeeIsk)
