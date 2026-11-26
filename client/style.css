@@ -1,11 +1,6 @@
 * {
   box-sizing: border-box;
 }
-body {
-  color: #193b34;
-  background: #f5f5ef;
-  font-family: Inter, 'Segoe UI', sans-serif;
-}
 .wrap {
   max-width: 1240px;
   margin: auto;
@@ -19,7 +14,7 @@ body {
   display: flex;
   align-items: center;
   height: 62px;
-  gap: 12px;
+  gap: var(--space-3);
 }
 .mark {
   color: #d4e599;
@@ -58,55 +53,77 @@ body {
 .empty p,
 .report-body p,
 .volume {
-  color: #51655d;
+  color: var(--color-muted);
   font-size: 14px;
   line-height: 1.5;
 }
 .workspace {
   display: grid;
   grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
-  gap: 22px;
+  gap: var(--space-6);
   align-items: start;
   margin-bottom: 48px;
 }
-form,
+.workspace > .MuiPaper-root {
+  border-color: var(--color-border);
+}
 .report {
-  background: #fff;
-  border: 1px solid #cbd5cc;
-  border-radius: 9px;
   overflow: hidden;
+}
+.order-title {
+  margin: var(--space-6) var(--space-6) 0;
+}
+.catalog-status {
+  margin-inline: var(--space-6);
+  margin-bottom: var(--space-4);
+}
+.catalog-status:where(div):not(.MuiAlert-root) {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  column-gap: var(--space-3);
+  background: #f3f5ef;
+  padding-inline: var(--space-3);
+  border-radius: var(--space-1);
+}
+.calculation-error {
+  margin-top: var(--space-4);
+}
+.calculation-status {
+  margin: var(--space-4) 0 0;
+  color: var(--color-muted);
 }
 fieldset {
   border: 0;
   margin: 0;
-  padding: 24px;
+  padding: var(--space-5) var(--space-6) var(--space-6);
   min-width: 0;
 }
 fieldset section + section {
-  border-top: 1px solid #dce1d9;
-  margin-top: 24px;
-  padding-top: 20px;
+  border-top: 1px solid var(--color-divider);
+  margin-top: var(--space-6);
+  padding-top: var(--space-5);
 }
 h2 {
-  margin: 0 0 20px;
+  margin: 0 0 var(--space-5);
   font-size: 21px;
   letter-spacing: -0.6px;
 }
 .pair {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(105px, 1fr);
-  gap: 14px;
+  gap: var(--space-4);
 }
 .fees {
   display: grid;
-  gap: 16px;
+  gap: var(--space-4);
 }
 .material {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: var(--space-3);
   align-items: center;
-  margin-top: 14px;
+  margin-top: var(--space-3);
 }
 .material p,
 .report-body p {
@@ -129,13 +146,13 @@ h2 {
     monospace;
 }
 fieldset > .MuiButton-root {
-  margin-top: 22px;
+  margin-top: var(--space-6);
   padding: 10px;
 }
 .report header {
   padding: 22px 24px 16px;
   background: #e7eee3;
-  border-bottom: 1px solid #cbd5cc;
+  border-bottom: 1px solid var(--color-border);
 }
 .report header h2 {
   margin: 5px 0 0;
@@ -166,7 +183,7 @@ fieldset > .MuiButton-root {
   margin: 0 auto;
 }
 .report-body {
-  padding: 20px 24px;
+  padding: var(--space-5) var(--space-6);
   overflow-wrap: anywhere;
 }
 .report-body h3 {
@@ -195,7 +212,7 @@ fieldset > .MuiButton-root {
 .detail,
 dl div {
   padding: 8px 0;
-  border-bottom: 1px solid #dce1d9;
+  border-bottom: 1px solid var(--color-divider);
 }
 .detail span {
   display: block;
@@ -215,9 +232,19 @@ dl div {
   font-weight: 650;
   font-variant-numeric: tabular-nums;
 }
-:focus-visible {
-  outline: 3px solid #227562;
+:focus-visible,
+.workspace .MuiButton-root.Mui-focusVisible,
+.report-body h3:focus {
+  outline: 3px solid var(--focus-color);
   outline-offset: 2px;
+}
+.MuiInputBase-root.Mui-focused,
+.MuiInputBase-root:has(:focus-visible) {
+  outline: 3px solid var(--focus-color);
+  outline-offset: 2px;
+}
+.MuiInputBase-root :focus-visible {
+  outline: none;
 }
 @media (max-width: 780px) {
   .workspace {
@@ -233,14 +260,20 @@ dl div {
     grid-template-columns: 1fr;
   }
   .material {
-    gap: 8px;
+    gap: var(--space-2);
   }
   .mast-sub {
     font-size: 11px;
   }
   fieldset,
   .report-body {
-    padding: 17px;
+    padding: var(--space-4);
+  }
+  .order-title {
+    margin: var(--space-4) var(--space-4) 0;
+  }
+  .catalog-status {
+    margin-inline: var(--space-4);
   }
   .intro h1 {
     letter-spacing: -1px;
